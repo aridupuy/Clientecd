@@ -5,12 +5,14 @@ $idComercio='FL662997';
 $sid='ABZ0ya68K791phuu76gQ5L662J6F2Y4j7zqE2Jxa3Mvd22TWNn4iip6L9yq';
 $desde='20160607';
 $hasta='20160715';
-$filtros=array('id_mp'=>'ingresos');
+$filtros=array(''=>'');
 
 try {
-    $cobro_digital=new cobrodigital($idComercio,$sid);
-    $cobro_digital->consultar_transacciones($desde, $hasta, $filtros);
-    print_r($cobro_digital->obtener_log());
+    $cobro_digital=new cliente_cobrodigital($idComercio,$sid);
+    if(!$cobro_digital->consultar_transacciones($desde, $hasta, $filtros))
+        print_r($cobro_digital->obtener_log());
+    else
+        print_r($cobro_digital->obtener_datos());
 } catch (Exception $ex) {
     print_r($ex->getMessage());
 }
