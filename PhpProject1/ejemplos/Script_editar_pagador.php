@@ -19,6 +19,7 @@ $pagador= array("APELLIDO Y NOMBRE" => "SILVIA GULISANO",
 //REPETAR TAL CUAL APARECE EN LA ESTRUCTURA DE CLIENTES!!!!! CASE SENSITIVE
 try {
     $cobro_digital=new Cliente_cobrodigital($idComercio,$sid);
+    $cobro_digital->set_method("nusoap");
     $cobro_digital->editar_pagador($identificador, $campo_a_buscar, $pagador);
     print_r($cobro_digital->obtener_log());
 } catch (Exception $ex) {

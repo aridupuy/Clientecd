@@ -6,6 +6,7 @@ $sid="ABZ0ya68K791phuu76gQ5L662J6F2Y4j7zqE2Jxa3Mvd22TWNn4iip6L9yq";
 $nro_boleta = "5445";
 try {
     $cobro_digital=new cliente_cobrodigital($idComercio,$sid);
+    $cobro_digital->set_method("nusoap");
     $resultado=$cobro_digital->obtener_codigo_de_barras($nro_boleta);    
     if($resultado){
         print_r($cobro_digital->obtener_datos());

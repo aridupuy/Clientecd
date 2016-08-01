@@ -1,12 +1,11 @@
 <?php
-
 class Cliente_cobrodigital {
+    const URL = "https://172.20.10.133:356/externo/script_landing_webservice_2.php";
     protected $resultado =array();
     protected $metodo_web_service=false;
-    protected $method = "POST";
+    protected $method = "nusoap";
     protected $array_a_enviar;
     protected $idComercio;
-    protected $sid;
     public function __construct($idComercio=false, $sid=false) {
         if(!$idComercio){
             throw new Exception("No definio idComercio");
@@ -26,28 +25,28 @@ class Cliente_cobrodigital {
         $this->ejecutar();
         return $this->obtener_resultado();
     }
-    public function editar_pagador($identificador, $campo_a_buscar,$nuevo_pagador /* nuevo_pagador debe ser un array asociativo*/){
+    public function editar_pagador($identificador, $dato_a_buscar,$nuevo_pagador /* nuevo_pagador debe ser un array asociativo*/){
         $this->metodo_web_service="editar_pagador";
         $this->array_a_enviar['identificador']=$identificador;
-        $this->array_a_enviar['buscar']=$campo_a_buscar;
+        $this->array_a_enviar['buscar']=$dato_a_buscar;
         $this->array_a_enviar['pagador']=$nuevo_pagador;
         $this->ejecutar();
         return $this->obtener_resultado();
     }
-    public function existe_pagador($identificador,$dato_a_buscar){
-        $this->metodo_web_service="existe_pagador";
+    public function verificar_existencia_pagador($identificador,$dato_a_buscar){
+        $this->metodo_web_service="verificar_existencia_pagador";
         $this->array_a_enviar["identificador"]=$identificador;
         $this->array_a_enviar["buscar"]=$dato_a_buscar;
         $this->ejecutar();
         return $this->obtener_resultado();
     }
-    public function generar_boleta($identificador,$campo_a_buscar, $concepto,$fecha_1, $importe_1,$modelo=false,$fecha_2=false,$importe_2=false,$fecha_3=false,$importe_3=false){
+    public function generar_boleta($identificador,$dato_a_buscar, $concepto,$fecha_1, $importe_1,$modelo=false,$fecha_2=false,$importe_2=false,$fecha_3=false,$importe_3=false){
         
         $this->metodo_web_service="generar_boleta";
         $this->array_a_enviar['identificador']=$identificador;
-        $this->array_a_enviar['buscar']=$campo_a_buscar;
+        $this->array_a_enviar['buscar']=$dato_a_buscar;
         if($modelo!=false)
-            $this->array_a_enviar['modelo']=$modelo;
+            $this->array_a_enviar['plantilla']=$modelo;
         $this->array_a_enviar['fechas_vencimiento'][]=$fecha_1;
         if($fecha_2!=false)
             $this->array_a_enviar['fechas_vencimiento'][]=$fecha_2;
@@ -74,8 +73,8 @@ class Cliente_cobrodigital {
         $this->ejecutar();
         return $this->obtener_resultado();
     }
-    public function cancelar_boleta($nro_boleta){
-        $this->metodo_web_service="cancelar_boleta";
+    public function inhabilitar_boleta($nro_boleta){
+        $this->metodo_web_service="inhabilitar_boleta";
         $this->array_a_enviar['nro_boleta']=$nro_boleta;
         $this->ejecutar();
         return $this->obtener_log();
@@ -86,7 +85,14 @@ class Cliente_cobrodigital {
         $this->ejecutar();
         return $this->obtener_resultado();
     }
-    //Fin de funciones/////
+    public function obtener_codigo_electronico($identificador,$dato_a_buscar){
+        $this->metodo_web_service="obtener_codigo_electronico";
+        $this->array_a_enviar["identificador"]=$identificador;
+        $this->array_a_enviar["buscar"]=$dato_a_buscar;
+        $this->ejecutar();
+        return $this->obtener_resultado();
+    }
+    //Fin de funciones de interfaz/////
     public function ejecutar($metodo_webservice=false, $array=false) {
         $this->array_a_enviar['idComercio']=$this->idComercio;
         $this->array_a_enviar['sid']=$this->sid;
@@ -96,22 +102,10 @@ class Cliente_cobrodigital {
             $array=$this->array_a_enviar;
         }
         $array['metodo_webservice']=  $metodo_webservice;
-        $url = "https://172.20.10.133:356/externo/script_landing_webservice_2.php";
-        $postdata = http_build_query($array);
-        $opts = array('http' =>
-                    array(
-                        'method' => $this->method,
-                        'header' => 'Content-type: application/x-www-form-urlencoded',
-                        'content' => $postdata
-                        )
-                );
-        $context = stream_context_create($opts);
-        $datos = file_get_contents($url, false, $context);
-        $this->resultado = json_decode($datos,true);
-        foreach ($this->resultado['log'] as $mensaje){
-            error_log($mensaje);
-        }
-        $this->array_a_enviar=array(); //funcion reinicializar
+        if ($this->method=='nusoap')
+            $this->enviar_nusoap ($array);
+        else
+            $this->enviar_http($array);
     }
     public function obtener_datos() {
         return $this->resultado['datos'];
@@ -123,5 +117,38 @@ class Cliente_cobrodigital {
     }
     public function obtener_log() {
         return $this->resultado['log'];
+    }
+    public function enviar_http($array){
+        $postdata = http_build_query($array);
+        $opts = array('http' =>
+                    array(
+                        'method' => $this->method,
+                        'header' => 'Content-type: application/x-www-form-urlencoded',
+                        'content' => $postdata
+                        )
+                );
+        $context = stream_context_create($opts);
+        $datos = file_get_contents(self::URL, false, $context);
+        $this->resultado = json_decode($datos,true);
+        foreach ($this->resultado['log'] as $mensaje){
+            error_log($mensaje);
+        }
+        $this->array_a_enviar=array(); //funcion reinicializar
+
+    }
+    public function enviar_nusoap($array){
+        include_once 'nusoap/nusoap.php';
+        $client = new nusoap_client(self::URL);
+        $result = $client->call('webservice_cobrodigital', array(json_encode($array)));
+        error_log('Recibido:');
+        error_log($result);
+        $this->resultado=  json_decode($result,true);
+    }
+    public function set_method($method){
+        $whitelist=array("nusoap","post","get");
+        if(in_array( strtolower(trim($method)),$whitelist))
+            $this->method=strtolower(trim($method));
+        else
+            throw new Exception ("Metodo de conección no admitido.");
     }
 }
