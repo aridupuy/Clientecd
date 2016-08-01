@@ -1,6 +1,5 @@
 package ejemplo_uso_webservice_java.lib;
 
-import com.sun.jndi.toolkit.url.UrlUtil;
 import java.util.LinkedHashMap;
 //import org.apache.axis.client.Service;
 //import org.apache.axis.client.Call;
@@ -14,14 +13,9 @@ import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import javax.net.ssl.HttpsURLConnection;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 public class ClienteCobroDigital {
 
     public LinkedHashMap resultado = new LinkedHashMap();
@@ -162,7 +156,7 @@ public class ClienteCobroDigital {
     public void enviar_https(String httpsurl, Map<?, ?> array_a_enviar) throws IOException, Exception {
         URL myurl = new URL(httpsurl);
         HttpsURLConnection con = (HttpsURLConnection) myurl.openConnection();
-        con.setRequestMethod("POST");
+        con.setRequestMethod(method);
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
         con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
         con.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
@@ -172,10 +166,8 @@ public class ClienteCobroDigital {
         wr.writeBytes(url_parameters);
         wr.flush();
         wr.close();
+        
         int responseCode = con.getResponseCode();
-        System.out.println("\nSending 'POST' request to URL : " + httpsurl);
-        System.out.println("Post parameters : " + url_parameters);
-        System.out.println("Response Code : " + responseCode);
         InputStream ins = con.getInputStream();
         InputStreamReader isr = new InputStreamReader(ins);
         BufferedReader in = new BufferedReader(isr);
@@ -192,18 +184,18 @@ public class ClienteCobroDigital {
     }
 
     public String http_build_query(Map<?, ?> data) throws Exception {
+//        return "?idComercio=CI366779&sid=MeAOO0d8tpk87Ud3AG0mZO7WCIP76GuKfU48UMVCuLO66aQGa0Iw3R6cDVs&pagador=[Musico+Id=Musico_id_1&Nombre=Nombre_1&Banda=Banda_1&Instrumento=Instrumento_1&Correo+Electronico=wscarano@cobrodigital.com]&metodo_webservice=crear_pagador";
         StringBuilder queryString = new StringBuilder();
          for (Map.Entry<?,?> entry : data.entrySet()) {
             if (queryString.length() > 0) {
                 queryString.append("&");
             }
             if(entry.getValue().getClass().getName()=="java.util.LinkedHashMap"){
-                
                 LinkedHashMap array=(LinkedHashMap) entry.getValue();
                 queryString.append(urlEncodeUTF8(entry.getKey().toString())+"=");
                 for (Iterator it = array.entrySet().iterator(); it.hasNext();) {
                     Map.Entry<?,?> row = (Map.Entry<?,?>) it.next();
-
+                    queryString.append(entry.getKey()+"%5B"+row.getKey()+"%5D="+row.getValue()+"&");
 //                    queryString.append(String.format("%s=%s", urlEncodeUTF8(row.getKey().toString()),urlEncodeUTF8(row.getValue().toString())));
                 }
             }
@@ -213,9 +205,9 @@ public class ClienteCobroDigital {
                     urlEncodeUTF8(entry.getValue().toString())
                 ));
             }
-        
+             System.out.println(queryString);
 //        return json_data;
-        
+//        "pagadorNombre%5D=mi_nombre_&pagador%5BBanda%5D=mi_banda_&pagador%5BInstrumento%5D=mi_instrumento_&idComercio=CI366779&sid=MeAOO0d8tpk87Ud3AG0mZO7WCIP76GuKfU48UMVCuLO66aQGa0Iw3R6cDVs&metodo_webservice=crear_pagador"
         }
          return queryString.toString();
     }
