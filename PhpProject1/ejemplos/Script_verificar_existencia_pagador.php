@@ -9,6 +9,8 @@ $dato_a_buscar="1000121s0";
 try{
     $cobro_digital=new Cliente_cobrodigital($idComercio,$sid);
     $cobro_digital->set_method("nusoap");
+    //    $cobro_digital->set_method("POST");
+    //    $cobro_digital->set_method("GET");
     if(!$cobro_digital->verificar_existencia_pagador($identificador, $dato_a_buscar))
         print_r($cobro_digital->obtener_log());
     else{

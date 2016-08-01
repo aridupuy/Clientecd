@@ -17,6 +17,8 @@ $modelo="init";
 try {
     $cobro_digital=new Cliente_cobrodigital($idComercio,$sid);
     $cobro_digital->set_method("nusoap");
+//    $cobro_digital->set_method("POST");
+//    $cobro_digital->set_method("GET");
     if(!($nro_boleta=$cobro_digital->generar_boleta($identificador,$campo_a_buscar,$concepto,$vencimiento_1,$importe_1,$modelo,$vencimiento_2,$importe_2,false,false)))
         print_r($cobro_digital->obtener_log());
     else

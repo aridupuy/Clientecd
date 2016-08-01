@@ -9,6 +9,8 @@ $campo_a_buscar="10000";
 try {
     $cobro_digital=new Cliente_cobrodigital($idComercio,$sid);
     $cobro_digital->set_method("nusoap");
+    //    $cobro_digital->set_method("POST");
+    //    $cobro_digital->set_method("GET");
     $cobro_digital->obtener_codigo_electronico($identificador, $campo_a_buscar);
     if(!$cobro_digital->obtener_resultado())
         print_r($cobro_digital->obtener_log());

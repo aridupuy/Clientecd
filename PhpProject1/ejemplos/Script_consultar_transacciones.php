@@ -10,6 +10,8 @@ $filtros=array(''=>'');
 try {
     $cobro_digital=new cliente_cobrodigital($idComercio,$sid);
     $cobro_digital->set_method("nusoap");
+    //    $cobro_digital->set_method("POST");
+    //    $cobro_digital->set_method("GET"  );
     if(!$cobro_digital->consultar_transacciones($desde, $hasta, $filtros))
         print_r($cobro_digital->obtener_log());
     else

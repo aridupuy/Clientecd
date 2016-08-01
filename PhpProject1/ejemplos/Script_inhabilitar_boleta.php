@@ -7,6 +7,8 @@ $nro_boleta = "4387";
 try {
     $cobro_digital=new cliente_cobrodigital($idComercio,$sid);
     $cobro_digital->set_method("nusoap");
+    //    $cobro_digital->set_method("POST");
+    //    $cobro_digital->set_method("GET");
     $resultado=$cobro_digital->cancelar_boleta($nro_boleta);    
     print_r($resultado);
 } catch (Exception $ex) {

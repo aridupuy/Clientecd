@@ -23,6 +23,17 @@ $datos= $client->call('webservice_cobrodigital', array(json_encode($array_a_envi
 //        );
 //$context = stream_context_create($opts);
 //$datos = file_get_contents($url, false, $context);
+///usando GET///
+//$postdata = http_build_query($array_a_enviar);
+//$opts = array('http' =>
+//            array(
+//                'method' => "GET",
+//                'header' => 'Content-type: application/x-www-form-urlencoded',
+//                'content' => $postdata
+//                )
+//        );
+//$context = stream_context_create($opts);
+//$datos = file_get_contents($url, false, $context);
 $resultado=  json_decode($result,true);
 $resultado = json_decode($datos,true);
 foreach ($resultado['log'] as $mensaje){
