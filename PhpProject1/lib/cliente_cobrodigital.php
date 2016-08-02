@@ -1,6 +1,7 @@
 <?php
 class Cliente_cobrodigital {
-    const URL = "https://172.20.10.133:356/externo/script_landing_webservice_2.php";
+    const URL = "https://www.cobrodigital.com:14365/ws3/";
+//    const URL = "https://172.20.10.133:356/externo/script_landing_webservice_2.php";
     protected $resultado =array();
     protected $metodo_web_service=false;
     protected $method = "nusoap";
@@ -15,7 +16,6 @@ class Cliente_cobrodigital {
         }
         $this->idComercio=$idComercio;
         $this->sid=$sid;
-        
         return $this;
     }
     //Funciones que dan una interfaz al usuario///
@@ -117,7 +117,9 @@ class Cliente_cobrodigital {
             $this->enviar_http($array);
     }
     public function obtener_datos() {
-        return $this->resultado['datos'];
+        if(isset($this->resultado['datos']) AND $this->resultado['datos']!=false)
+            return $this->resultado['datos'];
+        return false;
     }
     public function obtener_resultado() {
         if($this->resultado['ejecucion_correcta']==1)
@@ -125,13 +127,16 @@ class Cliente_cobrodigital {
         return false;
     }
     public function obtener_log() {
-        return $this->resultado['log'];
+        if(isset($this->resultado['log']) AND $this->resultado['log']!=false)
+            return $this->resultado['log'];
+        return false;
+            
     }
     public function enviar_http($array){
         $postdata = http_build_query($array);
         $opts = array('http' =>
                     array(
-                        'method' => $this->method,
+                        'method' => strtoupper($this->method),
                         'header' => 'Content-type: application/x-www-form-urlencoded',
                         'content' => $postdata
                         )

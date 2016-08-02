@@ -1,8 +1,8 @@
 <?php
 define("PATH_ROOT", "../");
 include_once PATH_ROOT.'lib/cliente_cobrodigital.php';
-$idComercio="FL662997";
-$sid="ABZ0ya68K791phuu76gQ5L662J6F2Y4j7zqE2Jxa3Mvd22TWNn4iip6L9yq";
+$idComercio="CI366779";
+$sid="MeAOO0d8tpk87Ud3AG0mZO7WCIP76GuKfU48UMVCuLO66aQGa0Iw3R6cDVs";
 $identificador="NRO CLIENTE";
 $dato_a_buscar="1000121s0";
 //REPETAR TAL CUAL APARECE EN LA ESTRUCTURA DE CLIENTES!!!!! CASE SENSITIVE
