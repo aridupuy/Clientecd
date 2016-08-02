@@ -129,7 +129,13 @@ public class ClienteCobroDigital {
         this.ejecutar();
         return this.obtener_resultado();
     }
-
+    public Object obtener_codigo_electronico(String identificador,String campo_a_buscar) throws Exception{
+            this.metodo_web_service = "obtener_codigo_electronico";
+            this.array_a_enviar.put("identificador", identificador);
+            this.array_a_enviar.put("buscar", campo_a_buscar);
+            this.ejecutar();
+            return this.obtener_resultado();
+    }
     //Fin de funciones/////
     public void ejecutar(String metodo_webservice, LinkedHashMap array) throws UnsupportedEncodingException, MalformedURLException, IOException, KeyManagementException, NoSuchAlgorithmException, Exception {
         this.array_a_enviar.put("idComercio", this.idComercio);
