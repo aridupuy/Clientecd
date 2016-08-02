@@ -92,6 +92,15 @@ class Cliente_cobrodigital {
         $this->ejecutar();
         return $this->obtener_resultado();
     }
+    public function consultar_actividad_micrositio($identificador, $dato_a_buscar, $desde, $hasta)
+    {
+        $this->array_a_enviar["identificador"]=$identificador;
+        $this->array_a_enviar["buscar"]=$dato_a_buscar;
+        $this->array_a_enviar["desde"]=$desde;
+        $this->array_a_enviar["hasta"]=$hasta;
+        $this->ejecutar();
+        return $this->obtener_resultado();   
+    }
     //Fin de funciones de interfaz/////
     public function ejecutar($metodo_webservice=false, $array=false) {
         $this->array_a_enviar['idComercio']=$this->idComercio;
