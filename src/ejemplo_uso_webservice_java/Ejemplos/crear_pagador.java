@@ -26,10 +26,6 @@ public class crear_pagador {
             }
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
-            System.out.println(ex.getCause());
-            System.out.println(ex.getLocalizedMessage());
-            System.out.println(ex.getStackTrace());
-            System.out.println(ex.getSuppressed());
         }
 
     }
