@@ -63,8 +63,8 @@ public class ClienteCobroDigital {
         return this.obtener_resultado();
     }
 
-    public boolean existe_pagador(String identificador, String dato_a_buscar) throws Exception {
-        this.metodo_web_service = "existe_pagador";
+    public boolean verificar_existencia_pagador(String identificador, String dato_a_buscar) throws Exception {
+        this.metodo_web_service = "verificar_existencia_pagador";
         this.array_a_enviar.put("identificador", identificador);
         this.array_a_enviar.put("buscar", dato_a_buscar);
         this.ejecutar();
@@ -100,6 +100,15 @@ public class ClienteCobroDigital {
         }
         return null;
     }
+    public boolean inhabilitar_boleta(int nro_boleta) throws Exception {
+        this.metodo_web_service = "inhabilitar_boleta";
+        this.array_a_enviar.put("nro_boleta", nro_boleta);
+        this.ejecutar();
+        if (this.obtener_resultado()) {
+            return true;
+        }
+        return false;
+    }
     public boolean consultar_transacciones(String fecha_desde, String fecha_hasta, LinkedHashMap filtros/*Filtros debe ser un array asociativo*/) throws MalformedURLException, IOException {
         try {
             metodo_web_service = "consultar_transacciones";
@@ -115,14 +124,12 @@ public class ClienteCobroDigital {
         }
         return obtener_resultado();
     }
-
     public String cancelar_boleta(int nro_boleta) throws Exception {
         this.metodo_web_service = "cancelar_boleta";
         this.array_a_enviar.put("nro_boleta", nro_boleta);
         this.ejecutar();
         return this.obtener_log();
     }
-
     public Object obtener_codigo_de_barras(int nro_boleta) throws Exception {
         this.metodo_web_service = "obtener_codigo_de_barras";
         this.array_a_enviar.put("nro_boleta", nro_boleta);
@@ -137,6 +144,10 @@ public class ClienteCobroDigital {
             return this.obtener_resultado();
     }
     //Fin de funciones/////
+    public void ejecutar() throws Exception {
+        System.out.println("ejecutar()");
+        ejecutar(metodo_web_service, (LinkedHashMap) array_a_enviar);
+    }
     public void ejecutar(String metodo_webservice, LinkedHashMap array) throws UnsupportedEncodingException, MalformedURLException, IOException, KeyManagementException, NoSuchAlgorithmException, Exception {
         this.array_a_enviar.put("idComercio", this.idComercio);
         this.array_a_enviar.put("sid", this.sid);
@@ -154,7 +165,6 @@ public class ClienteCobroDigital {
         enviar_https(httpsurl, array_a_enviar);
 
     }
-
     public void enviar_https(String httpsurl, Map<?, ?> array_a_enviar) throws IOException, Exception {
         URL myurl = new URL(httpsurl);
         System.out.println("entre");
@@ -180,12 +190,6 @@ public class ClienteCobroDigital {
         }
         in.close();
     }
-
-    public void ejecutar() throws Exception {
-        System.out.println("ejecutar()");
-        ejecutar(metodo_web_service, (LinkedHashMap) array_a_enviar);
-    }
-
     public String http_build_query(Map<?, ?> data) throws Exception {
 //        return "?idComercio=CI366779&sid=MeAOO0d8tpk87Ud3AG0mZO7WCIP76GuKfU48UMVCuLO66aQGa0Iw3R6cDVs&pagador=[Musico+Id=Musico_id_1&Nombre=Nombre_1&Banda=Banda_1&Instrumento=Instrumento_1&Correo+Electronico=wscarano@cobrodigital.com]&metodo_webservice=crear_pagador";
         StringBuilder queryString = new StringBuilder();
@@ -218,7 +222,6 @@ public class ClienteCobroDigital {
          System.out.println(queryString);
          return queryString.toString();
     }
-    
     public String urlEncodeUTF8(String s) {
         try {
             return URLEncoder.encode(s, "UTF-8");
@@ -229,14 +232,12 @@ public class ClienteCobroDigital {
     public String[] obtener_datos() {
         return (String[]) this.resultado.get("datos");
     }
-
     public boolean obtener_resultado() {
         if ((int) this.resultado.get("ejecucion_correcta") == 1) {
             return true;
         }
         return false;
     }
-
     public String obtener_log() {
         return (String) this.resultado.get("log");
     }
