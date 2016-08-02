@@ -124,6 +124,20 @@ public class ClienteCobroDigital {
         }
         return obtener_resultado();
     }
+    public Object consultar_actividad_micrositio(String identificador,String campo_a_buscar, String fecha_desde, String fecha_hasta) throws MalformedURLException, IOException {
+        try {
+            metodo_web_service = "consultar_actividad_micrositio";
+            array_a_enviar.put("identificador", identificador);
+            array_a_enviar.put("buscar", campo_a_buscar);
+            array_a_enviar.put("desde", fecha_desde);
+            array_a_enviar.put("hasta", fecha_hasta);
+            ejecutar();
+        } catch (Exception e) {
+            System.out.println(e.getLocalizedMessage());
+            return null;
+        }
+        return obtener_resultado();
+    }
     public String cancelar_boleta(int nro_boleta) throws Exception {
         this.metodo_web_service = "cancelar_boleta";
         this.array_a_enviar.put("nro_boleta", nro_boleta);
@@ -242,5 +256,6 @@ public class ClienteCobroDigital {
         return (String) this.resultado.get("log");
     }
 
+    
     
 }
